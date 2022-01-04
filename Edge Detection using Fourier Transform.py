@@ -8,17 +8,19 @@ from matplotlib import pyplot as plt
 img = cv.imread('lal_minar.jpg',0)
 
 #Frequency transform is a complex array
+#Applying the fast fourier transform on the array of the image
 f = np.fft.fft2(img)
 
-#Shifting the zero frequency component to the center
+#Shifting the zero frequency component to the center so that we can apply the zero frequency mask at the center
 fshift = np.fft.fftshift(f)
 
 #Finding the magnitude spectrum
 A1 = 20;
 
+# We apply the log transform so that we can reduce the value of the high peaks so that they do not hide the features
 magnitude_spectrum = A1*np.log(np.abs(fshift))
 
-#Plotting
+#Plotting the original image and the image after doing the transforms
 plt.subplot(121),plt.imshow(img, cmap = 'gray')
 plt.title('Input Image'), plt.xticks([]), plt.yticks([])
 plt.subplot(122),plt.imshow(magnitude_spectrum, cmap = 'gray')
@@ -31,6 +33,7 @@ rows, cols = img.shape
 crow,ccol = rows//2 , cols//2
 
 # HPF masking, center 12X12 grid masked 0, remaining all ones
+# Applying the filter so as to remove the low frequency component
 mask = 12;
 fshift[crow-mask:crow+mask, ccol-mask:ccol+mask] = 0
 
